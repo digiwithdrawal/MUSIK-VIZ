@@ -1,0 +1,141 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#07120b" />
+  <title>MUSIK! Viz</title>
+
+  <!-- GitHub Pages (root) friendly -->
+  <link rel="stylesheet" href="./styles.css?v=1" />
+
+  <!-- Tiny fallback so it never looks “unstyled” if CSS fails -->
+  <style>
+    html,body{margin:0;background:#050a07;color:#d9ffe8;font-family:ui-monospace,Menlo,Monaco,Consolas,"Courier New",monospace}
+    .warn{display:none;margin:10px;padding:10px;border:1px solid rgba(255,80,80,.35);border-radius:12px;background:rgba(255,80,80,.12)}
+  </style>
+</head>
+<body>
+  <div id="cssWarn" class="warn">STYLES NOT LOADING — check file names/paths (styles.css).</div>
+
+  <!-- Background HUD layer -->
+  <div class="bg" aria-hidden="true">
+    <div class="bgGrid"></div>
+    <div class="bgScan"></div>
+    <div class="bgVignette"></div>
+  </div>
+
+  <!-- Top HUD (hidden when HIDE) -->
+  <header id="hudTop" class="hudTop">
+    <div class="brand">
+      <div class="badgeOrb" aria-hidden="true"><span class="badgeMark">♪</span></div>
+      <div class="brandText">
+        <div class="brandTitle">MUSIK! Viz</div>
+        <div class="brandSub">music visualizer created by - digiwithdrawal</div>
+      </div>
+    </div>
+
+    <div class="statusCard">
+      <div class="statusRow">
+        <div class="statusKey">SRC</div>
+        <div id="srcLabel" class="statusVal">IMPORT</div>
+      </div>
+      <div class="statusRow">
+        <div class="statusKey">STATE</div>
+        <div id="stateLabel" class="statusVal">IDLE</div>
+      </div>
+      <div class="statusRow">
+        <div class="statusKey">VIS</div>
+        <div id="visLabel" class="statusVal">—</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main “screen” frame -->
+  <main class="screen">
+    <div class="screenFrame">
+      <div class="screenHeader">
+        <div class="screenHeaderLeft">
+          <div class="hdrPill">
+            <span class="hdrDot"></span>
+            <span id="visName">VIS 51 / SPECTRUM RING</span>
+          </div>
+        </div>
+
+        <div class="screenHeaderRight" id="hudMini">
+          <button id="importBtn" class="btn">IMPORT</button>
+          <button id="micBtn" class="btn ghost">MIC</button>
+          <button id="colorBtn" class="btn ghost">COLOR</button>
+          <button id="randPalBtn" class="btn ghost">RANDOM</button>
+          <button id="settingsBtn" class="btn ghost">SETTINGS</button>
+        </div>
+      </div>
+
+      <div class="vizViewport">
+        <canvas id="viz" class="vizCanvas"></canvas>
+      </div>
+
+      <!-- Settings drawer (only sliders). Hidden by default; hidden during HIDE -->
+      <section id="settingsDrawer" class="drawer hidden">
+        <div class="drawerTitle">SLIDERS</div>
+
+        <div class="sliderRow">
+          <div class="sliderLabel">INTENSITY</div>
+          <input id="intensity" class="slider" type="range" min="0" max="100" value="50" />
+          <div id="intensityVal" class="sliderVal">50%</div>
+        </div>
+
+        <div class="sliderRow">
+          <div class="sliderLabel">GAIN</div>
+          <input id="gain" class="slider" type="range" min="0" max="100" value="50" />
+          <div id="gainVal" class="sliderVal">50%</div>
+        </div>
+
+        <div class="sliderRow">
+          <div class="sliderLabel">BASS</div>
+          <input id="bass" class="slider" type="range" min="0" max="100" value="50" />
+          <div id="bassVal" class="sliderVal">50%</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Always-visible control bar (stays during HIDE) -->
+  <footer class="alwaysBar">
+    <div class="alwaysInner">
+      <button id="prevBtn" class="btn mini">◀</button>
+      <button id="nextBtn" class="btn mini">▶</button>
+
+      <button id="playBtn" class="btn big">PLAY</button>
+      <button id="hideBtn" class="btn ghost">HIDE</button>
+
+      <div class="metaPills">
+        <div id="palPill" class="pill">PAL: —</div>
+        <div id="lvlPill" class="pill">LVL: —</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Hidden file input -->
+  <input id="fileInput" type="file" accept="audio/*" style="display:none" />
+
+  <!-- Palette picker modal -->
+  <div id="paletteModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modalBackdrop"></div>
+    <div class="modalPanel">
+      <div class="modalHeader">
+        <div class="modalTitle">PALETTES</div>
+        <div class="modalBtns">
+          <button id="genPaletteBtn" class="btn mini ghost">GEN</button>
+          <button id="closePaletteBtn" class="btn mini">CLOSE</button>
+        </div>
+      </div>
+      <div class="modalHint">Tap a swatch. Palette affects the visualizer only.</div>
+      <div id="paletteGrid" class="paletteGrid"></div>
+    </div>
+  </div>
+
+  <script src="./app.js?v=1" defer></script>
+</body>
+</html>
