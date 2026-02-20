@@ -1,141 +1,146 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#07120b" />
+  <meta name="theme-color" content="#050a07" />
   <title>MUSIK! Viz</title>
-
-  <!-- GitHub Pages (root) friendly -->
-  <link rel="stylesheet" href="./styles.css?v=1" />
-
-  <!-- Tiny fallback so it never looks “unstyled” if CSS fails -->
-  <style>
-    html,body{margin:0;background:#050a07;color:#d9ffe8;font-family:ui-monospace,Menlo,Monaco,Consolas,"Courier New",monospace}
-    .warn{display:none;margin:10px;padding:10px;border:1px solid rgba(255,80,80,.35);border-radius:12px;background:rgba(255,80,80,.12)}
-  </style>
+  <link rel="stylesheet" href="./styles.css?v=2" />
 </head>
 <body>
-  <div id="cssWarn" class="warn">STYLES NOT LOADING — check file names/paths (styles.css).</div>
-
-  <!-- Background HUD layer -->
   <div class="bg" aria-hidden="true">
     <div class="bgGrid"></div>
     <div class="bgScan"></div>
     <div class="bgVignette"></div>
   </div>
 
-  <!-- Top HUD (hidden when HIDE) -->
-  <header id="hudTop" class="hudTop">
+  <!-- TOP PANEL (hidden in HIDE mode) -->
+  <header id="topPanel" class="topPanel">
     <div class="brand">
-      <div class="badgeOrb" aria-hidden="true"><span class="badgeMark">♪</span></div>
+      <div class="orb" aria-hidden="true"><span class="orbNote">♪</span></div>
       <div class="brandText">
         <div class="brandTitle">MUSIK! Viz</div>
         <div class="brandSub">music visualizer created by - digiwithdrawal</div>
       </div>
     </div>
 
-    <div class="statusCard">
-      <div class="statusRow">
-        <div class="statusKey">SRC</div>
-        <div id="srcLabel" class="statusVal">IMPORT</div>
+    <div class="readouts">
+      <div class="readout">
+        <div class="k">SRC</div><div id="srcLabel" class="v">IMPORT</div>
       </div>
-      <div class="statusRow">
-        <div class="statusKey">STATE</div>
-        <div id="stateLabel" class="statusVal">IDLE</div>
+      <div class="readout">
+        <div class="k">STATE</div><div id="stateLabel" class="v">IDLE</div>
       </div>
-      <div class="statusRow">
-        <div class="statusKey">VIS</div>
-        <div id="visLabel" class="statusVal">—</div>
+      <div class="readout">
+        <div class="k">VIS</div><div id="visLabel" class="v">VIS 51</div>
       </div>
     </div>
   </header>
 
-  <!-- Main “screen” frame -->
-  <main class="screen">
-    <div class="screenFrame">
-      <div class="screenHeader">
-        <div class="screenHeaderLeft">
-          <div class="hdrPill">
-            <span class="hdrDot"></span>
-            <span id="visName">VIS 51 / SPECTRUM RING</span>
-          </div>
+  <!-- MAIN FRAME -->
+  <main class="main">
+    <section class="frame">
+      <div class="frameChrome">
+        <div class="hazard"></div>
+        <div class="ledRow">
+          <span class="led"></span><span class="led"></span><span class="led"></span>
+          <span class="led"></span><span class="led"></span><span class="led"></span>
         </div>
+        <div class="chromeSlots">
+          <div class="slot"></div>
+          <div class="slot"></div>
+        </div>
+      </div>
 
-        <div class="screenHeaderRight" id="hudMini">
+      <div class="headerBar">
+        <div class="pill" id="visName">VIS 51 / SPECTRUM RING</div>
+
+        <div id="hudControls" class="hudControls">
           <button id="importBtn" class="btn">IMPORT</button>
           <button id="micBtn" class="btn ghost">MIC</button>
           <button id="colorBtn" class="btn ghost">COLOR</button>
-          <button id="randPalBtn" class="btn ghost">RANDOM</button>
+          <button id="randBtn" class="btn ghost">RANDOM</button>
           <button id="settingsBtn" class="btn ghost">SETTINGS</button>
         </div>
       </div>
 
-      <div class="vizViewport">
-        <canvas id="viz" class="vizCanvas"></canvas>
+      <!-- Viewport: we stack a 2D canvas + a WebGL canvas, and show the right one per visualizer -->
+      <div class="viewport">
+        <canvas id="gl" class="canvas hidden"></canvas>
+        <canvas id="viz" class="canvas"></canvas>
+
+        <div class="miniReadout">
+          <div class="mrLine"><span class="mrK">PAL</span> <span id="palLabel" class="mrV">CURATED</span></div>
+          <div class="mrLine"><span class="mrK">LVL</span> <span id="lvlLabel" class="mrV">—</span></div>
+        </div>
       </div>
 
-      <!-- Settings drawer (only sliders). Hidden by default; hidden during HIDE -->
-      <section id="settingsDrawer" class="drawer hidden">
-        <div class="drawerTitle">SLIDERS</div>
+      <!-- SETTINGS DRAWER (hidden during HIDE) -->
+      <section id="settings" class="settings hidden">
+        <div class="settingsTitle">REACTIVITY</div>
 
         <div class="sliderRow">
-          <div class="sliderLabel">INTENSITY</div>
+          <div class="sLabel">INTENSITY</div>
           <input id="intensity" class="slider" type="range" min="0" max="100" value="50" />
-          <div id="intensityVal" class="sliderVal">50%</div>
+          <div id="intensityVal" class="sVal">50%</div>
         </div>
 
         <div class="sliderRow">
-          <div class="sliderLabel">GAIN</div>
+          <div class="sLabel">GAIN</div>
           <input id="gain" class="slider" type="range" min="0" max="100" value="50" />
-          <div id="gainVal" class="sliderVal">50%</div>
+          <div id="gainVal" class="sVal">50%</div>
         </div>
 
         <div class="sliderRow">
-          <div class="sliderLabel">BASS</div>
+          <div class="sLabel">BASS</div>
           <input id="bass" class="slider" type="range" min="0" max="100" value="50" />
-          <div id="bassVal" class="sliderVal">50%</div>
+          <div id="bassVal" class="sVal">50%</div>
+        </div>
+
+        <div class="hint">
+          iPhone note: MP3 must be in the Files app (Downloads / iCloud / On My iPhone). Apple Music library files won’t import.
         </div>
       </section>
-    </div>
+    </section>
   </main>
 
-  <!-- Always-visible control bar (stays during HIDE) -->
+  <!-- ALWAYS BAR (stays visible in HIDE) -->
   <footer class="alwaysBar">
     <div class="alwaysInner">
-      <button id="prevBtn" class="btn mini">◀</button>
-      <button id="nextBtn" class="btn mini">▶</button>
+      <div class="leftGroup">
+        <button id="prevBtn" class="btn mini">◀</button>
+        <button id="nextBtn" class="btn mini">▶</button>
+      </div>
 
-      <button id="playBtn" class="btn big">PLAY</button>
-      <button id="hideBtn" class="btn ghost">HIDE</button>
+      <div class="centerGroup">
+        <button id="playBtn" class="btn big">PLAY</button>
+      </div>
 
-      <div class="metaPills">
-        <div id="palPill" class="pill">PAL: —</div>
-        <div id="lvlPill" class="pill">LVL: —</div>
+      <div class="rightGroup">
+        <button id="hideBtn" class="btn ghost">HIDE</button>
       </div>
     </div>
   </footer>
 
-  <!-- Hidden file input -->
-  <input id="fileInput" type="file" accept="audio/*" style="display:none" />
+  <!-- FILE INPUT (accept mp3 explicitly) -->
+  <input id="fileInput" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg" style="display:none" />
 
-  <!-- Palette picker modal -->
-  <div id="paletteModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modalBackdrop"></div>
+  <!-- PALETTE MODAL -->
+  <div id="palModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modalBg"></div>
     <div class="modalPanel">
-      <div class="modalHeader">
-        <div class="modalTitle">PALETTES</div>
+      <div class="modalTop">
+        <div class="modalTitle">PALETTES (VIS ONLY)</div>
         <div class="modalBtns">
-          <button id="genPaletteBtn" class="btn mini ghost">GEN</button>
-          <button id="closePaletteBtn" class="btn mini">CLOSE</button>
+          <button id="genPalBtn" class="btn mini ghost">GEN</button>
+          <button id="closePalBtn" class="btn mini">CLOSE</button>
         </div>
       </div>
-      <div class="modalHint">Tap a swatch. Palette affects the visualizer only.</div>
-      <div id="paletteGrid" class="paletteGrid"></div>
+      <div class="modalHint">Tap a swatch. RANDOM button only randomizes palette.</div>
+      <div id="palGrid" class="palGrid"></div>
     </div>
   </div>
 
-  <script src="./app.js?v=1" defer></script>
+  <script src="./app.js?v=2" defer></script>
 </body>
 </html>
